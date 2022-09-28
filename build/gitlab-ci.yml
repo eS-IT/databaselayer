@@ -5,7 +5,7 @@ runtests:
     stage: test
     except:
         - tags
-    image: easysolutionsit/contao-testsuite:1.0.13
+    image: easysolutionsit/contao-testsuite:1.0.14
     variables:
         GIT_STRATEGY: none
         PROJECT_NAME: databaselayer
