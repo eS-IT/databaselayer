@@ -1,0 +1,33 @@
+{
+    "name": "esit/databaselayer",
+    "description": "Es handelt sich um eine Erweiterung für das Open Source CMS Contao",
+    "license": "proprietary",
+    "type": "contao-bundle",
+    "authors": [
+        {
+            "name": "Patrick Froch",
+            "email": "info@easySolutionsIT.de",
+            "homepage": "http://easySolutionsIT.de",
+            "role": "Developer"
+        }
+    ],
+    "support": {
+        "email": "info@easySolutionsIT.de"
+    },
+    "require": {
+        "php": "^8.0",
+        "contao/core-bundle": "~4.9"
+    },
+    "require-dev": {
+        "contao/test-case": "^4.9",
+        "phpunit/phpunit": "^9.5"
+    },
+    "autoload": {
+        "psr-4": {
+            "Esit\\Databaselayer\\": ""
+        }
+    },
+    "extra": {
+        "contao-manager-plugin": "Esit\\Databaselayer\\Classes\\Contao\\Manager\\Plugin"
+    }
+}
