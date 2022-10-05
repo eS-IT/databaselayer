@@ -5,7 +5,7 @@ runtests:
     stage: test
     except:
         - tags
-    image: esit-projekt.de:5000/contao-testsuite:1.0.1
+    image: esit-projekt.de:5000/contao-testsuite:1.0.14
     variables:
         GIT_STRATEGY: none
         PROJECT_NAME: databaselayer
