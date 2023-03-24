@@ -60,6 +60,6 @@ class ExecutionHelper
         }
 
         // Fallback für Contao 4.9
-        return $query->execute()->fetchAll(\PDO::FETCH_ASSOC);
+        return $query->execute()->fetchAllAssociative();
     }
 }
