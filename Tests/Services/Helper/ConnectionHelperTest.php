@@ -84,9 +84,23 @@ class ConnectionHelperTest extends TestCase
                        ->disableOriginalConstructor()
                        ->getMock();
 
-        $this->connection->expects(self::once())
-                         ->method('createSchemaManager')
-                         ->willReturn($schema);
+        if (\method_exists($this->connection, 'createSchemaManager')) {
+            $this->connection->expects(self::once())
+                             ->method('createSchemaManager')
+                             ->willReturn($schema);
+
+            $this->connection->expects(self::never())
+                             ->method('getSchemaManager');
+        }
+
+        if (\method_exists($this->connection, 'getSchemaManager')) {
+            $this->connection->expects(self::never())
+                             ->method('createSchemaManager');
+
+            $this->connection->expects(self::once())
+                             ->method('getSchemaManager')
+                             ->willReturn($schema);
+        }
 
         self::assertSame($schema, $this->helper->getSchemaManager());
     }
