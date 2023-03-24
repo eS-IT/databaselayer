@@ -26,6 +26,7 @@ class ExecutionHelper
      * @param QueryBuilder $query
      * @return int
      * @throws Exception
+     * @todo Kompatibilitätslayer entfernen, wenn Support für Contao 4.9 ausläuft!
      */
     public function executeStatement(QueryBuilder $query): int
     {
@@ -50,6 +51,7 @@ class ExecutionHelper
      * @param QueryBuilder $query
      * @return array
      * @throws Exception
+     * @todo Kompatibilitätslayer entfernen, wenn Support für Contao 4.9 ausläuft!
      */
     public function executeQuery(QueryBuilder $query): array
     {

@@ -80,9 +80,15 @@ class ConnectionHelper
      *
      * @return AbstractSchemaManager
      * @throws Exception
+     * @todo Kompatibilitätslayer entfernen, wenn Support für Contao 4.9 ausläuft!
      */
     public function getSchemaManager(): AbstractSchemaManager
     {
-        return $this->connection->createSchemaManager();
+        if (\method_exists($this->connection, 'createSchemaManager')) {
+            return $this->connection->createSchemaManager();
+        }
+
+        // Fallback für Contao 4.9
+        return $this->connection->getSchemaManager();
     }
 }
