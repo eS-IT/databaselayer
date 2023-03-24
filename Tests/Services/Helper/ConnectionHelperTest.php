@@ -93,7 +93,7 @@ class ConnectionHelperTest extends TestCase
                              ->method('getSchemaManager');
         }
 
-        if (\method_exists($this->connection, 'getSchemaManager')) {
+        if (!\method_exists($this->connection, 'getSchemaManager')) {
             $this->connection->expects(self::never())
                              ->method('createSchemaManager');
 
