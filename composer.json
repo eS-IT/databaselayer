@@ -1,7 +1,7 @@
 {
     "name": "esit/databaselayer",
-    "description": "Es handelt sich um eine Erweiterung für das Open Source CMS Contao",
-    "license": "proprietary",
+    "description": "Bei dieser Software handelt es sich um eine Erweiterung für das Open Source CMS Contao, die Zugriff auf die Datenbank vereinfacht.",
+    "license": "LGPL-3.0-or-later",
     "type": "contao-bundle",
     "authors": [
         {
@@ -12,8 +12,11 @@
         }
     ],
     "support": {
-        "email": "info@easySolutionsIT.de"
+        "email": "info@easySolutionsIT.de",
+        "issues": "https://github.com/eS-IT/databaselayer/issues",
+        "docs": "https://github.com/eS-IT/databaselayer/blob/main/README.md"
     },
+    "readme": "README.md",
     "require": {
         "php": "^8.0",
         "contao/core-bundle": "~4.9"

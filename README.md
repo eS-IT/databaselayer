@@ -14,7 +14,7 @@ __e@sy Solutions IT:__ Patrick Froch <info@easySolutionsIT.de>
 
 ## Lizenz
 
-Die Software wird unter LGPL veröffentlicht. Details sind in der Datei `LICENSE` zu finden.
+Die Software wird unter LGPL-v3 veröffentlicht. Details sind in der Datei `LICENSE` zu finden.
 
 
 ## Voraussetzungen
@@ -61,7 +61,7 @@ myClass
         $this->dbHelper->update($row, 16, 'tl_member');
         $this->dbHelper->delete(16, 'tl_member');
 
-        // QueryBuilder
+        // Verwendung des QueryBuilders
         $query  = $this->dbHelper->getQueryBuilder();
         $query->select('*')->from('tl_member')->where->('id > :id')->setParameter('id', 12);
         $result = $query->executeQuery();
