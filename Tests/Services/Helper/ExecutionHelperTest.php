@@ -105,29 +105,23 @@ class ExecutionHelperTest extends TestCase
     {
         $row = ['test'];
 
+        $this->result->expects(self::once())
+                     ->method('fetchAllAssociative')
+                     ->willReturn($row);
+
         if (\method_exists($this->query, 'executeQuery')) {
             $this->query->expects(self::once())
                         ->method('executeQuery')
                         ->willReturn($this->result);
 
-            $this->result->expects(self::once())
-                         ->method('fetchAllAssociative')
-                         ->willReturn($row);
-
             $this->query->expects(self::never())
                         ->method('execute');
-
-            $this->result->expects(self::never())
-                         ->method('fetchAll');
         }
 
         if (!\method_exists($this->query, 'executeQuery')) {
             $this->query->expects(self::once())
                         ->method('execute')
                         ->willReturn($this->result);
-
-            $this->result->expects(self::once())
-                         ->method('fetchAll');
         }
 
         self::assertSame($row, $this->execHelper->executeQuery($this->query));
