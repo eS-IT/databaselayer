@@ -19,6 +19,7 @@ use Doctrine\DBAL\Schema\Column;
 use Doctrine\DBAL\Schema\Table;
 use Esit\Databaselayer\Classes\Excaptions\InvalidArgumentException;
 use Esit\Databaselayer\Classes\Services\Helper\ConnectionHelper;
+use Esit\Databaselayer\Classes\Services\Helper\ExecutionHelper;
 use Esit\Databaselayer\Classes\Services\Helper\SchemaHelper;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -40,6 +41,12 @@ class SchemaHelperTest extends TestCase
 
 
     /**
+     * @var (ExecutionHelper&MockObject)|MockObject
+     */
+    private $execHelper;
+
+
+    /**
      * @var SchemaHelper
      */
     private $helper;
@@ -55,10 +62,14 @@ class SchemaHelperTest extends TestCase
                                        ->disableOriginalConstructor()
                                        ->getMock();
 
+        $this->execHelper       = $this->getMockBuilder(ExecutionHelper::class)
+                                       ->disableOriginalConstructor()
+                                       ->getMock();
+
         $this->connectionHelper->method('getSchemaManager')
                                ->willReturn($this->schemaManager);
 
-        $this->helper           = new SchemaHelper($this->connectionHelper);
+        $this->helper           = new SchemaHelper($this->connectionHelper, $this->execHelper);
     }
 
 

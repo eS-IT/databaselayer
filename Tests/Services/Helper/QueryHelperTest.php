@@ -19,6 +19,7 @@ use Doctrine\DBAL\Result;
 
 use Esit\Databaselayer\Classes\Excaptions\InvalidArgumentException;
 use Esit\Databaselayer\Classes\Services\Helper\ConnectionHelper;
+use Esit\Databaselayer\Classes\Services\Helper\ExecutionHelper;
 use Esit\Databaselayer\Classes\Services\Helper\QueryHelper;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -40,9 +41,9 @@ class QueryHelperTest extends TestCase
 
 
     /**
-     * @var Result&MockObject|MockObject
+     * @var (ExecutionHelper&MockObject)|MockObject
      */
-    private $result;
+    private $execHelper;
 
 
     /**
@@ -61,11 +62,11 @@ class QueryHelperTest extends TestCase
                                        ->disableOriginalConstructor()
                                        ->getMock();
 
-        $this->result           = $this->getMockBuilder(Result::class)
+        $this->execHelper       = $this->getMockBuilder(ExecutionHelper::class)
                                        ->disableOriginalConstructor()
                                        ->getMock();
 
-        $this->helper           = new QueryHelper($this->connectionHelper);
+        $this->helper           = new QueryHelper($this->connectionHelper, $this->execHelper);
     }
 
 
@@ -161,13 +162,9 @@ class QueryHelperTest extends TestCase
                            ->with($field, $value)
                            ->willReturn(self::returnSelf());
 
-        $this->queryBuilder->expects(self::once())
-                           ->method('executeQuery')
-                           ->willReturn($this->result);
-
-        $this->result->expects(self::once())
-                     ->method('fetchAllAssociative')
-                     ->willReturn($row);
+        $this->execHelper->expects(self::once())
+                         ->method('executeQuery')
+                         ->willReturn($row);
 
         $rtn = $this->helper->loadByValue($value, $field, $table);
 
@@ -273,13 +270,9 @@ class QueryHelperTest extends TestCase
                            ->with($field, $order)
                            ->willReturn(self::returnSelf());
 
-        $this->queryBuilder->expects(self::once())
-                           ->method('executeQuery')
-                           ->willReturn($this->result);
-
-        $this->result->expects(self::once())
-                     ->method('fetchAllAssociative')
-                     ->willReturn([$row, $row]);
+        $this->execHelper->expects(self::once())
+                         ->method('executeQuery')
+                         ->willReturn([$row, $row]);
 
         $rtn = $this->helper->loadByList($value, $field, $table, $order);
 

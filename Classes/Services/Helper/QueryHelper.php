@@ -37,12 +37,12 @@ class QueryHelper extends AbstractHelper
 
         $query = $this->connectionHelper->getQueryBuilder();
 
-        return $query->select('*')
-            ->from($table)
-            ->where("$field = :$field")
-            ->setParameter($field, $value)
-            ->executeQuery()
-            ->fetchAllAssociative();
+         $query->select('*')
+               ->from($table)
+               ->where("$field = :$field")
+               ->setParameter($field, $value);
+
+        return $this->execHelper->executeQuery($query);
     }
 
 
@@ -65,12 +65,12 @@ class QueryHelper extends AbstractHelper
         $valueString    = \implode(',', $valueList);
         $query          = $this->connectionHelper->getQueryBuilder();
 
-        return $query->select('*')
-            ->from($table)
-            ->where("$field IN (:$field)")
-            ->setParameter($field, $valueString)
-            ->orderBy($field, $order)
-            ->executeQuery()
-            ->fetchAllAssociative();
+        $query->select('*')
+              ->from($table)
+              ->where("$field IN (:$field)")
+              ->setParameter($field, $valueString)
+              ->orderBy($field, $order);
+
+        return $this->execHelper->executeQuery($query);
     }
 }

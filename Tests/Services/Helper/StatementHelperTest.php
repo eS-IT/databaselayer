@@ -13,13 +13,13 @@ declare(strict_types=1);
 
 namespace Esit\Databaselayer\Tests\Services\Helper;
 
-use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception;
 use Doctrine\DBAL\Query\QueryBuilder;
 use Esit\Databaselayer\Classes\Excaptions\InvalidArgumentException;
 use Esit\Databaselayer\Classes\Excaptions\NoDataFoundException;
 use Esit\Databaselayer\Classes\Services\Helper\ConnectionHelper;
 use Esit\Databaselayer\Classes\Services\Helper\DataHelper;
+use Esit\Databaselayer\Classes\Services\Helper\ExecutionHelper;
 use Esit\Databaselayer\Classes\Services\Helper\StatementHelper;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -47,6 +47,12 @@ class StatementHelperTest extends TestCase
 
 
     /**
+     * @var (ExecutionHelper&MockObject)|MockObject
+     */
+    private $execHelper;
+
+
+    /**
      * @var StatementHelper
      */
     private StatementHelper $helper;
@@ -66,10 +72,14 @@ class StatementHelperTest extends TestCase
                                        ->disableOriginalConstructor()
                                        ->getMock();
 
+        $this->execHelper       = $this->getMockBuilder(ExecutionHelper::class)
+                                       ->disableOriginalConstructor()
+                                       ->getMock();
+
         $this->connectionHelper->method('getQueryBuilder')
                                ->willReturn($this->queryBuilder);
 
-        $this->helper           = new StatementHelper($this->connectionHelper, $this->dataHelper);
+        $this->helper           = new StatementHelper($this->connectionHelper, $this->execHelper, $this->dataHelper);
     }
 
 
@@ -98,8 +108,8 @@ class StatementHelperTest extends TestCase
         $this->queryBuilder->expects(self::never())
                            ->method('setParameter');
 
-        $this->queryBuilder->expects(self::never())
-                           ->method('executeStatement');
+        $this->execHelper->expects(self::never())
+                         ->method('executeStatement');
 
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('parameter could not be empty');
@@ -133,8 +143,8 @@ class StatementHelperTest extends TestCase
         $this->queryBuilder->expects(self::never())
                            ->method('setParameter');
 
-        $this->queryBuilder->expects(self::never())
-                           ->method('executeStatement');
+        $this->execHelper->expects(self::never())
+                         ->method('executeStatement');
 
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('parameter could not be empty');
@@ -167,8 +177,8 @@ class StatementHelperTest extends TestCase
         $this->queryBuilder->expects(self::never())
                            ->method('setParameter');
 
-        $this->queryBuilder->expects(self::never())
-                           ->method('executeStatement');
+        $this->execHelper->expects(self::never())
+                         ->method('executeStatement');
 
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('parameter could not be empty');
@@ -216,8 +226,8 @@ class StatementHelperTest extends TestCase
                            ->with('id', $id)
                            ->willReturn(self::returnSelf());
 
-        $this->queryBuilder->expects(self::once())
-                           ->method('executeStatement');
+        $this->execHelper->expects(self::once())
+                         ->method('executeStatement');
 
         $this->helper->update($data, $id, $table);
     }
@@ -251,8 +261,8 @@ class StatementHelperTest extends TestCase
         $this->queryBuilder->expects(self::never())
                            ->method('setParameters');
 
-        $this->queryBuilder->expects(self::never())
-                           ->method('executeStatement');
+        $this->execHelper->expects(self::never())
+                         ->method('executeStatement');
 
         $this->connectionHelper->expects(self::never())
                                ->method('getConnection');
@@ -292,8 +302,8 @@ class StatementHelperTest extends TestCase
         $this->queryBuilder->expects(self::never())
                            ->method('setParameters');
 
-        $this->queryBuilder->expects(self::never())
-                           ->method('executeStatement');
+        $this->execHelper->expects(self::never())
+                         ->method('executeStatement');
 
         $this->connectionHelper->expects(self::never())
                                ->method('getConnection');
@@ -339,20 +349,8 @@ class StatementHelperTest extends TestCase
                            ->with($data)
                            ->willReturn(self::returnSelf());
 
-        $this->queryBuilder->expects(self::once())
-                           ->method('executeStatement');
-
-        $connection = $this->getMockBuilder(Connection::class)
-                           ->disableOriginalConstructor()
-                           ->getMock();
-
-        $connection->expects(self::once())
-                   ->method('lastInsertId')
-                   ->willReturn($id);
-
-        $this->connectionHelper->expects(self::once())
-                               ->method('getConnection')
-                               ->willReturn($connection);
+        $this->execHelper->expects(self::once())
+                         ->method('executeStatement')->willReturn($id);
 
         $rtn = $this->helper->insert($data, $table);
 
@@ -379,8 +377,8 @@ class StatementHelperTest extends TestCase
         $this->queryBuilder->expects(self::never())
                            ->method('setParameter');
 
-        $this->queryBuilder->expects(self::never())
-                           ->method('executeStatement');
+        $this->execHelper->expects(self::never())
+                         ->method('executeStatement');
 
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('parameter could not be empty');
@@ -408,8 +406,8 @@ class StatementHelperTest extends TestCase
         $this->queryBuilder->expects(self::never())
                            ->method('setParameter');
 
-        $this->queryBuilder->expects(self::never())
-                           ->method('executeStatement');
+        $this->execHelper->expects(self::never())
+                         ->method('executeStatement');
 
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('parameter could not be empty');
@@ -437,8 +435,8 @@ class StatementHelperTest extends TestCase
         $this->queryBuilder->expects(self::never())
                            ->method('setParameter');
 
-        $this->queryBuilder->expects(self::never())
-                           ->method('executeStatement');
+        $this->execHelper->expects(self::never())
+                         ->method('executeStatement');
 
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('parameter could not be empty');
@@ -472,8 +470,8 @@ class StatementHelperTest extends TestCase
                            ->with($field, $value)
                            ->willReturn(self::returnSelf());
 
-        $this->queryBuilder->expects(self::once())
-                           ->method('executeStatement');
+        $this->execHelper->expects(self::once())
+                         ->method('executeStatement');
 
         $this->helper->delete($value, $field, $table);
     }

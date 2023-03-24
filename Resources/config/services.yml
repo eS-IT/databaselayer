@@ -11,6 +11,8 @@ services:
     Esit\Databaselayer\Classes\Services\Helper\DatabaseHelper:
         public: true
 
+    Esit\Databaselayer\Classes\Services\Helper\ExecutionHelper:
+
     Esit\Databaselayer\Classes\Services\Helper\DataHelper:
 
     Esit\Databaselayer\Classes\Services\Helper\QueryHelper:

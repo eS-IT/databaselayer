@@ -18,16 +18,10 @@ abstract class AbstractHelper
 
 
     /**
-     * @var ConnectionHelper
+     * @param ConnectionHelper $connectionHelper
+     * @param ExecutionHelper  $execHelper
      */
-    protected ConnectionHelper $connectionHelper;
-
-
-    /**
-     * @param ConnectionHelper $conHelper
-     */
-    public function __construct(ConnectionHelper $conHelper)
+    public function __construct(protected ConnectionHelper $connectionHelper, protected ExecutionHelper $execHelper)
     {
-        $this->connectionHelper = $conHelper;
     }
 }

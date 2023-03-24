@@ -22,19 +22,16 @@ class StatementHelper extends AbstractHelper
 
 
     /**
-     * @var DataHelper
-     */
-    private DataHelper $dataHelper;
-
-
-    /**
      * @param ConnectionHelper $conHelper
+     * @param ExecutionHelper  $execHelper
      * @param DataHelper       $dataHelper
      */
-    public function __construct(ConnectionHelper $conHelper, DataHelper $dataHelper)
-    {
-        parent::__construct($conHelper);
-        $this->dataHelper = $dataHelper;
+    public function __construct(
+        ConnectionHelper $conHelper,
+        ExecutionHelper $execHelper,
+        private DataHelper $dataHelper
+    ) {
+        parent::__construct($conHelper, $execHelper);
     }
 
 
@@ -61,8 +58,9 @@ class StatementHelper extends AbstractHelper
         }
 
         $query->where("id = :id")
-            ->setParameter('id', $id)
-            ->executeStatement();
+              ->setParameter('id', $id);
+
+        $this->execHelper->executeStatement($query);
     }
 
 
@@ -85,12 +83,10 @@ class StatementHelper extends AbstractHelper
         }
 
         $query->insert($table)
-            ->values($fields)
-            ->setParameters($data)
-            ->executeStatement();
+              ->values($fields)
+              ->setParameters($data);
 
-        return (int)$this->connectionHelper->getConnection()
-            ->lastInsertId();
+        return $this->execHelper->executeStatement($query);
     }
 
 
@@ -111,8 +107,9 @@ class StatementHelper extends AbstractHelper
 
         $query = $this->connectionHelper->getQueryBuilder();
         $query->delete($table)
-            ->where("$field = :$field")
-            ->setParameter($field, $value)
-            ->executeStatement();
+              ->where("$field = :$field")
+              ->setParameter($field, $value);
+
+        $this->execHelper->executeStatement($query);
     }
 }
