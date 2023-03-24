@@ -88,8 +88,6 @@ class ExecutionHelperTest extends TestCase
         }
 
         if (!\method_exists($this->query, 'executeStatement')) {
-            $this->query->expects(self::never())
-                        ->method('executeStatement');
 
             $this->query->expects(self::once())
                         ->method('execute');
@@ -124,12 +122,6 @@ class ExecutionHelperTest extends TestCase
         }
 
         if (!\method_exists($this->query, 'executeQuery')) {
-            $this->query->expects(self::never())
-                        ->method('executeQuery');
-
-            $this->result->expects(self::never())
-                         ->method('fetchAllAssociative');
-
             $this->query->expects(self::once())
                         ->method('execute')
                         ->willReturn($this->result);
