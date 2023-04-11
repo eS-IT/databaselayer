@@ -19,8 +19,6 @@ use Esit\Databaselayer\Classes\Excaptions\NoDataFoundException;
 
 class StatementHelper extends AbstractHelper
 {
-
-
     /**
      * @param ConnectionHelper $conHelper
      * @param ExecutionHelper  $execHelper
@@ -38,9 +36,9 @@ class StatementHelper extends AbstractHelper
     /**
      * Ändert einen Datensatz in der Db.
      *
-     * @param  array  $data
-     * @param  int    $id
-     * @param  string $table
+     * @param  mixed[]  $data
+     * @param  int      $id
+     * @param  string   $table
      * @throws Exception
      */
     public function update(array $data, int $id, string $table): void
@@ -67,8 +65,8 @@ class StatementHelper extends AbstractHelper
     /**
      * Fügt einen neuen Datensatz in die Db ein.
      *
-     * @param  array  $data
-     * @param  string $table
+     * @param  mixed[]  $data
+     * @param  string   $table
      * @throws Exception
      * @return int
      */

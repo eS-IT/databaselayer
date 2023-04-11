@@ -18,12 +18,10 @@ use Esit\Databaselayer\Classes\Excaptions\InvalidArgumentException;
 
 class SchemaHelper extends AbstractHelper
 {
-
-
     /**
      * Gibt ein Array mit den Namen der Datenbanken zurück.
      *
-     * @return array
+     * @return mixed[]
      * @throws Exception
      */
     public function getDatabases(): array
@@ -35,7 +33,7 @@ class SchemaHelper extends AbstractHelper
     /**
      * Gibt ein Array mit den Namen der Tabellen zurück.
      *
-     * @return array
+     * @return mixed[]
      * @throws Exception
      */
     public function getTables(): array
@@ -55,7 +53,7 @@ class SchemaHelper extends AbstractHelper
      * Gibt ein Array mit den Spalten einer Tabelle zurück.
      *
      * @param  string $table
-     * @return array
+     * @return mixed[]
      * @throws Exception
      */
     public function getColumns(string $table): array

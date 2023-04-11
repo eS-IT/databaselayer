@@ -20,8 +20,6 @@ use Doctrine\DBAL\Schema\AbstractSchemaManager;
 
 class DatabaseHelper
 {
-
-
     /**
      * @var ConnectionHelper
      */
@@ -92,13 +90,13 @@ class DatabaseHelper
     /**
      * Fassade für QueryHelper::loadByValue().
      *
-     * @param  $value
-     * @param  string $field
-     * @param  string $table
-     * @return array
+     * @param  int|string $value
+     * @param  string     $field
+     * @param  string     $table
+     * @return mixed[]
      * @throws Exception
      */
-    public function loadByValue($value, string $field, string $table): array
+    public function loadByValue(int|string $value, string $field, string $table): array
     {
         return $this->queryHelper->loadByValue($value, $field, $table);
     }
@@ -107,24 +105,24 @@ class DatabaseHelper
     /**
      * Fassade für QueryHelper::loadByList().
      *
-     * @param  array  $valueList
-     * @param  string $field
-     * @param  string $table
-     * @param  string $order
-     * @return array
+     * @param  mixed[]  $valueList
+     * @param  string   $field
+     * @param  string   $table
+     * @param  string   $order
+     * @return mixed[]
      * @throws Exception
      */
     public function loadByList(array $valueList, string $field, string $table, string $order = 'ASC'): array
     {
-        return $this->queryHelper->loadByList($valueList, $field, $table);
+        return $this->queryHelper->loadByList($valueList, $field, $table, $order);
     }
 
 
     /**
      * Fassade für StatementHelper::insert().
      *
-     * @param  array  $data
-     * @param  string $table
+     * @param  mixed[]  $data
+     * @param  string   $table
      * @return int
      * @throws Exception
      */
@@ -137,9 +135,9 @@ class DatabaseHelper
     /**
      * Fassade für StatementHelper::update().
      *
-     * @param  array  $data
-     * @param  int    $id
-     * @param  string $table
+     * @param  mixed[]  $data
+     * @param  int      $id
+     * @param  string   $table
      * @return void
      * @throws Exception
      */

@@ -15,8 +15,6 @@ namespace Esit\Databaselayer\Classes\Services\Helper;
 
 abstract class AbstractHelper
 {
-
-
     /**
      * @param ConnectionHelper $connectionHelper
      * @param ExecutionHelper  $execHelper

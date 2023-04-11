@@ -18,18 +18,16 @@ use Esit\Databaselayer\Classes\Excaptions\InvalidArgumentException;
 
 class QueryHelper extends AbstractHelper
 {
-
-
     /**
      * Lädt Daten aus der Datenbank anhane eines bestimmten Werts (z.B. der Id).
      *
-     * @param  $value
-     * @param  string $field
-     * @param  string $table
+     * @param  int|string $value
+     * @param  string     $field
+     * @param  string     $table
      * @throws Exception
-     * @return array
+     * @return mixed[]
      */
-    public function loadByValue($value, string $field, string $table): array
+    public function loadByValue(int|string $value, string $field, string $table): array
     {
         if (empty($value) || empty($field) || empty($table)) {
             throw new InvalidArgumentException('parameter could not be empty');
@@ -49,12 +47,12 @@ class QueryHelper extends AbstractHelper
     /**
      * Lädt Werte aus einer Liste.
      *
-     * @param  array  $valueList
-     * @param  string $field
-     * @param  string $table
-     * @param  string $order
+     * @param  mixed[]  $valueList
+     * @param  string   $field
+     * @param  string   $table
+     * @param  string   $order
      * @throws Exception
-     * @return array
+     * @return mixed[]
      */
     public function loadByList(array $valueList, string $field, string $table, string $order = 'ASC'): array
     {

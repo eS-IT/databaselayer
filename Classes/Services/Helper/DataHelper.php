@@ -18,8 +18,6 @@ use Esit\Databaselayer\Classes\Excaptions\InvalidArgumentException;
 
 class DataHelper
 {
-
-
     /**
      * @var SchemaHelper
      */
@@ -38,9 +36,9 @@ class DataHelper
     /**
      * Gibt nur die Daten zurück, für die es auch Felder in der Datenbanktabelle gibt.
      *
-     * @param  array  $row
-     * @param  string $table
-     * @return array
+     * @param  mixed[]  $row
+     * @param  string   $table
+     * @return mixed[]
      * @throws Exception
      */
     public function filterDataForDatabase(array $row, string $table): array
@@ -66,9 +64,9 @@ class DataHelper
     /**
      * Gibt ein Array mit den Namen der Felder für ein Insert-Statement zurück.
      *
-     * @param  array  $row
-     * @param  string $table
-     * @return array
+     * @param  mixed[]  $row
+     * @param  string   $table
+     * @return mixed[]
      */
     public function filterFieldsForInsert(array $row, string $table): array
     {

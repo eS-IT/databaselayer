@@ -20,8 +20,6 @@ use Doctrine\DBAL\Schema\AbstractSchemaManager;
 
 class ConnectionHelper
 {
-
-
     /**
      * @var Connection
      */

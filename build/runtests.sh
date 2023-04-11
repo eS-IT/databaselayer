@@ -4,14 +4,10 @@
 #title:         runtests.sh
 #description:   Führt die Tests der Softwate aus
 #author:        pfroch <patrick.froch@easySolutionsIT.de>
-#date:          20180819
-#version:       1.0.0
+#date:          20220810
 #usage:         runtests.sh
 # =============================================================================
 #
-
-BUILD_FULLPACKAGE="false";
-
 
 ## Ausgabe
 function myecho() {
@@ -82,71 +78,21 @@ done
 ## Variablen
 error=0
 tmperr=0
-configFolder='./build'
+configFolder="$(pwd)/build"
 toolFolder="${configFolder}/tools"
-classesFolder='./Classes'
-
-
-## phpcbf
-if [ -f ${toolFolder}/php-cs-fixer ]
-then
-    myecho "Führe automatische Korrektur der Code-Standards mit PhpCbf durch"
-    if [ "${VERBOSE}" == "TRUE" ]
-    then
-        ${toolFolder}/phpcbf Classes
-        tmperr=$?
-    else
-        ${toolFolder}/phpcbf -q Classes
-        tmperr=$?
-    fi
-
-    if [ ${tmperr} -ne 0 ]
-    then
-       error=${tmperr}
-       myerror "Es ist ein Fehler ausgetreten [${tmperr}]"
-    else
-       myshortecho "Automatische Korrektur der Code-Standards mit PhpCbf erfolgreich"
-    fi
-else
-   myinfo "Automatische Korrektur der Code-Standards ausgelassen. PhpCbf vorhanden!"
-fi
-
-
-## phpcs
-if [ -f ${toolFolder}/phpcs ]
-then
-    myecho "Führe statische Code-Analyse mit PHP Codesniffer durch"
-    if [ "${VERBOSE}" == "TRUE" ]
-    then
-        ${toolFolder}/phpcs --colors --standard=PSR2 ${classesFolder}
-        tmperr=$?
-    else
-        ${toolFolder}/phpcs -q --standard=PSR2 ${classesFolder}
-        tmperr=$?
-    fi
-
-    if [ ${tmperr} -ne 0 ]
-    then
-        error=${tmperr}
-        myerror "Es ist ein Fehler ausgetreten [${tmperr}]"
-    else
-        myshortecho "Statische Code-Analyse mit PHP Codesniffer erfolgreich"
-    fi
-else
-    myinfo "Statische Code-Analyse ausgelassen. PHP Codesniffer nicht vorhanden!"
-fi
+classesFolder="$(pwd)/Classes"
 
 
 ## phpcpd
-if [ -f ${toolFolder}/phpcpd ]
+if [ -f "${toolFolder}/phpcpd" ]
 then
     myecho "Prüfe auf doppelten Code"
     if [ "${VERBOSE}" == "TRUE" ]
     then
-        ${toolFolder}/phpcpd ${classesFolder}
+        "${toolFolder}/phpcpd" "${classesFolder}"
         tmperr=$?
     else
-        ${toolFolder}/phpcpd ${classesFolder} &>/dev/null
+        "${toolFolder}/phpcpd" "${classesFolder}" &>/dev/null
         tmperr=$?
     fi
 
@@ -162,13 +108,89 @@ else
 fi
 
 
+## phpcs
+if [ -f "${toolFolder}/phpcbf" ]
+then
+    myecho "Führe statische Code-Verbesserung mit PHP Codesniffer durch"
+    if [ "${VERBOSE}" == "TRUE" ]
+    then
+        "${toolFolder}/phpcbf" --colors --standard=PSR12 "${classesFolder}"
+        tmperr=$?
+    else
+        "${toolFolder}/phpcbf" -q --standard=PSR12 "${classesFolder}" &>/dev/null
+        tmperr=$?
+    fi
+
+    if [ ${tmperr} -ne 0 ]
+    then
+        error=${tmperr}
+        myerror "Es ist ein Fehler ausgetreten [${tmperr}]"
+    else
+        myshortecho "Statische Code-Verbesserung mit PHP Codesniffer erfolgreich"
+    fi
+else
+    myinfo "Statische Code-Verbesserung ausgelassen. PHP Codesniffer nicht vorhanden!"
+fi
+
+
+## phpcs
+if [ -f "${toolFolder}/phpcs" ]
+then
+    myecho "Führe statische Code-Analyse mit PHP Codesniffer durch"
+    if [ "${VERBOSE}" == "TRUE" ]
+    then
+        "${toolFolder}/phpcs" --colors --standard=PSR12 "${classesFolder}"
+        tmperr=$?
+    else
+        "${toolFolder}/phpcs" -q --standard=PSR12 "${classesFolder}"
+        tmperr=$?
+    fi
+
+    if [ ${tmperr} -ne 0 ]
+    then
+        error=${tmperr}
+        myerror "Es ist ein Fehler ausgetreten [${tmperr}]"
+    else
+        myshortecho "Statische Code-Analyse mit PHP Codesniffer erfolgreich"
+    fi
+else
+    myinfo "Statische Code-Analyse ausgelassen. PHP Codesniffer nicht vorhanden!"
+fi
+
+
+## PHPStan
+if [ -f "${toolFolder}/phpcpd" ]
+then
+    myecho "Prüfe Code-Qualität mit PHPStan"
+
+    if [ "${VERBOSE}" == "TRUE" ]
+    then
+        "${toolFolder}/phpstan" analyse -c "${configFolder}/phpstan.neon"
+        tmperr=$?
+    else
+        "${toolFolder}/phpstan" analyse -q -c "${configFolder}/phpstan.neon"
+        tmperr=$?
+    fi
+
+    if [ ${tmperr} -ne 0 ]
+    then
+        error=${tmperr}
+        "${toolFolder}/phpstan" analyse -c "${configFolder}/phpstan.neon"
+    else
+       myshortecho "Prüfen Code-Qualität mit PHPStan erfolgreich"
+    fi
+else
+    myinfo "Prüfen Code-Qualität mit PHPStan ausgelassen. PHPStan nicht vorhanden!"
+fi
+
+
 ## PHPUnit
 if [ -f ../../../vendor/bin/phpunit ] && [ -d ./Tests ]
 then
     # PHPUnit gobal mit composer installiert
     echo
     myecho "Führe UnitTests mit globalem PHPUnit durch"
-    XDEBUG_MODE=coverage ../../../vendor/bin/phpunit --configuration ${configFolder}/phpunit/phpunit.xml.dist --testdox
+    XDEBUG_MODE=coverage ../../../vendor/bin/phpunit --configuration "${configFolder}/phpunit/phpunit.xml.dist" --testdox
     tmperr=$?
 
     if [ ${tmperr} -ne 0 ]
@@ -182,7 +204,6 @@ fi
 
 echo
 
-
 ## Zusammenfassung
 if [ ${error} -ne 0 ]
 then
@@ -195,13 +216,6 @@ then
     echo
     exit 127
 else
-    if [ -f /home/pfroch/bin/buildfullpackage ] && [ "$BUILD_FULLPACKAGE" != "false" ]
-    then
-        # Installationsarchiv erstellen
-        echo "Erstelle installationsarchiv"
-        /home/pfroch/bin/buildfullpackage
-    fi
-
     myecho ">>>>>>>>>>>>>>>>>>>>>>> Es sind keine Fehler aufgetreten <<<<<<<<<<<<<<<<<<<<<<<"
     echo
     exit 0

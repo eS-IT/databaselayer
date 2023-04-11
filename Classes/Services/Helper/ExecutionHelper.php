@@ -18,8 +18,6 @@ use Doctrine\DBAL\Exception;
 
 class ExecutionHelper
 {
-
-
     /**
      * Führt eine Änderung an der Datenbank aus.
      * (Kompatibilitätslayer für Contao 4.9)
@@ -35,13 +33,13 @@ class ExecutionHelper
         if (\method_exists($query, 'executeStatement')) {
             $query->executeStatement();
 
-            return $conn->lastInsertId();
+            return (int)$conn->lastInsertId();
         }
 
         // Fallback für Contao 4.9
         $query->execute();
 
-        return $conn->lastInsertId();
+        return (int)$conn->lastInsertId();
     }
 
 
@@ -49,7 +47,7 @@ class ExecutionHelper
      * Führt eine Abfrage auf der Datenbank aus.
      * (Kompatibilitätslayer für Contao 4.9)
      * @param QueryBuilder $query
-     * @return array
+     * @return mixed[]
      * @throws Exception
      * @todo Kompatibilitätslayer entfernen, wenn Support für Contao 4.9 ausläuft!
      */
@@ -60,6 +58,8 @@ class ExecutionHelper
         }
 
         // Fallback für Contao 4.9
-        return $query->execute()->fetchAllAssociative();
+        $result = $query->execute();
+
+        return (\is_int($result) || \is_string($result)) ? [$result] : $result->fetchAllAssociative();
     }
 }
