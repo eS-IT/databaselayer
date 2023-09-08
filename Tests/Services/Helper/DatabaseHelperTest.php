@@ -163,6 +163,25 @@ class DatabaseHelperTest extends TestCase
      * @return void
      * @throws Exception
      */
+    public function testLoadAll(): void
+    {
+        $table          = 'tl_test';
+        $orderField     = 'id';
+        $order          = 'DESC';
+        $data           = [['id' => 12, 'name' => 'test'], ['id' => 13, 'name' => 'testTwo']];
+
+        $this->queryHelper->expects(self::once())
+                          ->method('loadAll')
+                          ->with($table, $orderField, $order)
+                          ->willReturn($data);
+
+        self::assertSame($data, $this->helper->loadAll($table, $orderField, $order));
+    }
+
+    /**
+     * @return void
+     * @throws Exception
+     */
     public function testInsertWillCallStatementHelper(): void
     {
         $data   = ['name' => 'test'];

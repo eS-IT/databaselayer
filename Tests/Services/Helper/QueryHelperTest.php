@@ -278,4 +278,107 @@ class QueryHelperTest extends TestCase
 
         self::assertSame([$row, $row], $rtn);
     }
+
+
+    /**
+     * @return void
+     * @throws Exception
+     */
+    public function testLaodAllThrowsExceptionIfTableIsEmpty(): void
+    {
+        $table = '';
+
+        $this->connectionHelper->expects(self::never())
+                               ->method('getQueryBuilder');
+
+        $this->queryBuilder->expects(self::never())
+                           ->method('select');
+
+        $this->queryBuilder->expects(self::never())
+                           ->method('from');
+
+        $this->queryBuilder->expects(self::never())
+                           ->method('orderBy');
+
+        $this->execHelper->expects(self::never())
+                         ->method('executeQuery');
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('parameter could not be empty');
+        $this->helper->loadAll($table);
+    }
+
+
+    /**
+     * @return void
+     * @throws Exception
+     */
+    public function testLaodAllReturnsArrayIfDataLoaded(): void
+    {
+        $table  = 'tl_test';
+        $row    = ['id' => 12, 'name' => 'Test'];
+
+        $this->connectionHelper->expects(self::once())
+                               ->method('getQueryBuilder')
+                               ->willReturn($this->queryBuilder);
+
+        $this->queryBuilder->expects(self::once())
+                           ->method('select')
+                           ->with('*')
+                           ->willReturn($this->queryBuilder);
+
+        $this->queryBuilder->expects(self::once())
+                           ->method('from')
+                           ->with($table)
+                           ->willReturn($this->queryBuilder);
+
+        $this->queryBuilder->expects(self::never())
+                           ->method('orderBy');
+
+        $this->execHelper->expects(self::once())
+                         ->method('executeQuery')
+                         ->with($this->queryBuilder)
+                         ->willReturn($row);
+
+        self::assertSame($row, $this->helper->loadAll($table));
+    }
+
+
+    /**
+     * @return void
+     * @throws Exception
+     */
+    public function testLaodAllSetOrderIfOrderFieldIsGiven(): void
+    {
+        $table      = 'tl_test';
+        $order      = 'DESC';
+        $orderField = 'id';
+        $row        = ['id' => 12, 'name' => 'Test'];
+
+        $this->connectionHelper->expects(self::once())
+                               ->method('getQueryBuilder')
+                               ->willReturn($this->queryBuilder);
+
+        $this->queryBuilder->expects(self::once())
+                           ->method('select')
+                           ->with('*')
+                           ->willReturn($this->queryBuilder);
+
+        $this->queryBuilder->expects(self::once())
+                           ->method('from')
+                           ->with($table)
+                           ->willReturn($this->queryBuilder);
+
+        $this->queryBuilder->expects(self::once())
+                           ->method('orderBy')
+                           ->with($orderField, $order)
+                           ->willReturn($this->queryBuilder);
+
+        $this->execHelper->expects(self::once())
+                         ->method('executeQuery')
+                         ->with($this->queryBuilder)
+                         ->willReturn($row);
+
+        self::assertSame($row, $this->helper->loadAll($table, $orderField, $order));
+    }
 }

@@ -71,4 +71,31 @@ class QueryHelper extends AbstractHelper
 
         return $this->execHelper->executeQuery($query);
     }
+
+
+    /**
+     * Lädt alle Daten einer Tabelle.
+     * @param string $table
+     * @param string $order
+     * @param string $orderField
+     * @return mixed[]
+     * @throws Exception
+     */
+    public function loadAll(string $table, string $orderField = '', string $order = 'ASC'): array
+    {
+        if (empty($table)) {
+            throw new InvalidArgumentException('parameter could not be empty');
+        }
+
+        $query = $this->connectionHelper->getQueryBuilder();
+
+        $query->select('*')
+              ->from($table);
+
+        if ('' !== $orderField) {
+            $query->orderBy($orderField, $order);
+        }
+
+        return $this->execHelper->executeQuery($query);
+    }
 }

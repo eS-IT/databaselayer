@@ -119,6 +119,20 @@ class DatabaseHelper
 
 
     /**
+     * Fassade für QueryHelper::loadAll().
+     * @param string $table
+     * @param string $order
+     * @param string $orderField
+     * @return mixed[]
+     * @throws Exception
+     */
+    public function loadAll(string $table, string $orderField = '', string $order = 'ASC'): array
+    {
+        return $this->queryHelper->loadAll($table, $orderField, $order);
+    }
+
+
+    /**
      * Fassade für StatementHelper::insert().
      *
      * @param  mixed[]  $data
