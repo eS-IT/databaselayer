@@ -119,11 +119,64 @@ class ExecutionHelperTest extends TestCase
         }
 
         if (!\method_exists($this->query, 'executeQuery')) {
+            $this->query->expects(self::never())
+                        ->method('executeQuery');
+
             $this->query->expects(self::once())
                         ->method('execute')
                         ->willReturn($this->result);
         }
 
+        $this->query->expects(self::never())
+                    ->method('setFirstResult');
+
+        $this->query->expects(self::never())
+                    ->method('setMaxResults');
+
         self::assertSame($row, $this->execHelper->executeQuery($this->query));
+    }
+
+
+    /**
+     * @return void
+     * @throws \Doctrine\DBAL\Exception
+     */
+    public function testExecuteQueryCallRightMethodeWithOffsetAndLimit(): void
+    {
+        $row    = ['test'];
+        $offset = 12;
+        $limit  = 34;
+
+        $this->result->expects(self::once())
+                     ->method('fetchAllAssociative')
+                     ->willReturn($row);
+
+        if (\method_exists($this->query, 'executeQuery')) {
+            $this->query->expects(self::once())
+                        ->method('executeQuery')
+                        ->willReturn($this->result);
+
+            $this->query->expects(self::never())
+                        ->method('execute');
+        }
+
+        if (!\method_exists($this->query, 'executeQuery')) {
+            $this->query->expects(self::never())
+                        ->method('executeQuery');
+
+            $this->query->expects(self::once())
+                        ->method('execute')
+                        ->willReturn($this->result);
+        }
+
+        $this->query->expects(self::once())
+                    ->method('setFirstResult')
+                    ->with($offset);
+
+        $this->query->expects(self::once())
+                    ->method('setMaxResults')
+                    ->with($limit);
+
+        self::assertSame($row, $this->execHelper->executeQuery($this->query, $offset, $limit));
     }
 }

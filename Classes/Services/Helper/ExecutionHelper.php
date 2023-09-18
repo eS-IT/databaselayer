@@ -21,6 +21,7 @@ class ExecutionHelper
     /**
      * Führt eine Änderung an der Datenbank aus.
      * (Kompatibilitätslayer für Contao 4.9)
+     *
      * @param QueryBuilder $query
      * @return int
      * @throws Exception
@@ -46,13 +47,24 @@ class ExecutionHelper
     /**
      * Führt eine Abfrage auf der Datenbank aus.
      * (Kompatibilitätslayer für Contao 4.9)
+     *
      * @param QueryBuilder $query
+     * @param int $offset
+     * @param int $limit
      * @return mixed[]
      * @throws Exception
      * @todo Kompatibilitätslayer entfernen, wenn Support für Contao 4.9 ausläuft!
      */
-    public function executeQuery(QueryBuilder $query): array
+    public function executeQuery(QueryBuilder $query, int $offset = 0, int $limit = 0): array
     {
+        if (0 !== $offset) {
+            $query->setFirstResult($offset);
+        }
+
+        if (0 !== $limit) {
+            $query->setMaxResults($limit);
+        }
+
         if (\method_exists($query, 'executeQuery')) {
             return $query->executeQuery()->fetchAllAssociative();
         }

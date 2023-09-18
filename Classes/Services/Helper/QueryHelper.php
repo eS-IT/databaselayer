@@ -21,14 +21,21 @@ class QueryHelper extends AbstractHelper
     /**
      * Lädt Daten aus der Datenbank anhane eines bestimmten Werts (z.B. der Id).
      *
-     * @param  int|string $value
-     * @param  string     $field
-     * @param  string     $table
-     * @throws Exception
+     * @param int|string $value
+     * @param string $field
+     * @param string $table
+     * @param int $offset
+     * @param int $limit
      * @return mixed[]
+     * @throws Exception
      */
-    public function loadByValue(int|string $value, string $field, string $table): array
-    {
+    public function loadByValue(
+        int|string $value,
+        string $field,
+        string $table,
+        int $offset = 0,
+        int $limit = 0
+    ): array {
         if (empty($value) || empty($field) || empty($table)) {
             throw new InvalidArgumentException('parameter could not be empty');
         }
@@ -40,22 +47,30 @@ class QueryHelper extends AbstractHelper
                ->where("$field = :$field")
                ->setParameter($field, $value);
 
-        return $this->execHelper->executeQuery($query);
+        return $this->execHelper->executeQuery($query, $offset, $limit);
     }
 
 
     /**
      * Lädt Werte aus einer Liste.
      *
-     * @param  mixed[]  $valueList
-     * @param  string   $field
-     * @param  string   $table
-     * @param  string   $order
-     * @throws Exception
+     * @param mixed[] $valueList
+     * @param string $field
+     * @param string $table
+     * @param string $order
+     * @param int $offset
+     * @param int $limit
      * @return mixed[]
+     * @throws Exception
      */
-    public function loadByList(array $valueList, string $field, string $table, string $order = 'ASC'): array
-    {
+    public function loadByList(
+        array $valueList,
+        string $field,
+        string $table,
+        string $order = 'ASC',
+        int $offset = 0,
+        int $limit = 0
+    ): array {
         if (empty($valueList) || empty($field) || empty($table)) {
             throw new InvalidArgumentException('parameter could not be empty');
         }
@@ -69,20 +84,28 @@ class QueryHelper extends AbstractHelper
               ->setParameter($field, $valueString)
               ->orderBy($field, $order);
 
-        return $this->execHelper->executeQuery($query);
+        return $this->execHelper->executeQuery($query, $offset, $limit);
     }
 
 
     /**
      * Lädt alle Daten einer Tabelle.
+     *
      * @param string $table
-     * @param string $order
      * @param string $orderField
+     * @param string $order
+     * @param int $offset
+     * @param int $limit
      * @return mixed[]
      * @throws Exception
      */
-    public function loadAll(string $table, string $orderField = '', string $order = 'ASC'): array
-    {
+    public function loadAll(
+        string $table,
+        string $orderField = '',
+        string $order = 'ASC',
+        int $offset = 0,
+        int $limit = 0
+    ): array {
         if (empty($table)) {
             throw new InvalidArgumentException('parameter could not be empty');
         }
@@ -96,6 +119,6 @@ class QueryHelper extends AbstractHelper
             $query->orderBy($orderField, $order);
         }
 
-        return $this->execHelper->executeQuery($query);
+        return $this->execHelper->executeQuery($query, $offset, $limit);
     }
 }

@@ -164,9 +164,58 @@ class QueryHelperTest extends TestCase
 
         $this->execHelper->expects(self::once())
                          ->method('executeQuery')
+                         ->with($this->queryBuilder)
                          ->willReturn($row);
 
         $rtn = $this->helper->loadByValue($value, $field, $table);
+
+        self::assertSame($row, $rtn);
+    }
+
+
+    /**
+     * @return void
+     * @throws Exception
+     */
+    public function testLoadByValueSetOffsetAndLimit(): void
+    {
+        $value  = '12';
+        $field  = 'id';
+        $table  = 'tl_test';
+        $offset = 12;
+        $limit  = 34;
+        $row    = ['id' => 12, 'name' => 'Test'];
+
+        $this->connectionHelper->expects(self::once())
+                               ->method('getQueryBuilder')
+                               ->willReturn($this->queryBuilder);
+
+        $this->queryBuilder->expects(self::once())
+                           ->method('select')
+                           ->with('*')
+                           ->willReturn(self::returnSelf());
+
+        $this->queryBuilder->expects(self::once())
+                           ->method('from')
+                           ->with($table)
+                           ->willReturn(self::returnSelf());
+
+        $this->queryBuilder->expects(self::once())
+                           ->method('where')
+                           ->with("$field = :$field")
+                           ->willReturn(self::returnSelf());
+
+        $this->queryBuilder->expects(self::once())
+                           ->method('setParameter')
+                           ->with($field, $value)
+                           ->willReturn(self::returnSelf());
+
+        $this->execHelper->expects(self::once())
+                         ->method('executeQuery')
+                         ->with($this->queryBuilder, $offset, $limit)
+                         ->willReturn($row);
+
+        $rtn = $this->helper->loadByValue($value, $field, $table, $offset, $limit);
 
         self::assertSame($row, $rtn);
     }
@@ -272,9 +321,64 @@ class QueryHelperTest extends TestCase
 
         $this->execHelper->expects(self::once())
                          ->method('executeQuery')
+                         ->with($this->queryBuilder)
                          ->willReturn([$row, $row]);
 
         $rtn = $this->helper->loadByList($value, $field, $table, $order);
+
+        self::assertSame([$row, $row], $rtn);
+    }
+
+
+    /**
+     * @return void
+     * @throws Exception
+     */
+    public function testLoadByListSetOffsetAndLimit(): void
+    {
+        $value  = ['12', '34'];
+        $field  = 'id';
+        $table  = 'tl_test';
+        $order  = 'DESC';
+        $offset = 12;
+        $limit = 34;
+        $row    = ['id' => 12, 'name' => 'Test'];
+
+        $this->connectionHelper->expects(self::once())
+                               ->method('getQueryBuilder')
+                               ->willReturn($this->queryBuilder);
+
+        $this->queryBuilder->expects(self::once())
+                           ->method('select')
+                           ->with('*')
+                           ->willReturn(self::returnSelf());
+
+        $this->queryBuilder->expects(self::once())
+                           ->method('from')
+                           ->with($table)
+                           ->willReturn(self::returnSelf());
+
+        $this->queryBuilder->expects(self::once())
+                           ->method('where')
+                           ->with("$field IN (:$field)")
+                           ->willReturn(self::returnSelf());
+
+        $this->queryBuilder->expects(self::once())
+                           ->method('setParameter')
+                           ->with($field, \implode(',', $value))
+                           ->willReturn(self::returnSelf());
+
+        $this->queryBuilder->expects(self::once())
+                           ->method('orderBy')
+                           ->with($field, $order)
+                           ->willReturn(self::returnSelf());
+
+        $this->execHelper->expects(self::once())
+                         ->method('executeQuery')
+                         ->with($this->queryBuilder, $offset, $limit)
+                         ->willReturn([$row, $row]);
+
+        $rtn = $this->helper->loadByList($value, $field, $table, $order, $offset, $limit);
 
         self::assertSame([$row, $row], $rtn);
     }
@@ -380,5 +484,46 @@ class QueryHelperTest extends TestCase
                          ->willReturn($row);
 
         self::assertSame($row, $this->helper->loadAll($table, $orderField, $order));
+    }
+
+
+    /**
+     * @return void
+     * @throws Exception
+     */
+    public function testLaodAllSetOffsetAndLimitIfOrderFieldIsGiven(): void
+    {
+        $table      = 'tl_test';
+        $order      = 'DESC';
+        $orderField = 'id';
+        $offset     = 12;
+        $limit      = 34;
+        $row        = ['id' => 12, 'name' => 'Test'];
+
+        $this->connectionHelper->expects(self::once())
+                               ->method('getQueryBuilder')
+                               ->willReturn($this->queryBuilder);
+
+        $this->queryBuilder->expects(self::once())
+                           ->method('select')
+                           ->with('*')
+                           ->willReturn($this->queryBuilder);
+
+        $this->queryBuilder->expects(self::once())
+                           ->method('from')
+                           ->with($table)
+                           ->willReturn($this->queryBuilder);
+
+        $this->queryBuilder->expects(self::once())
+                           ->method('orderBy')
+                           ->with($orderField, $order)
+                           ->willReturn($this->queryBuilder);
+
+        $this->execHelper->expects(self::once())
+                         ->method('executeQuery')
+                         ->with($this->queryBuilder, $offset, $limit)
+                         ->willReturn($row);
+
+        self::assertSame($row, $this->helper->loadAll($table, $orderField, $order, $offset, $limit));
     }
 }
