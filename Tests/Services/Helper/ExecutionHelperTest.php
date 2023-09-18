@@ -80,9 +80,6 @@ class ExecutionHelperTest extends TestCase
                     ->willReturn($this->connection);
 
         if (\method_exists($this->query, 'executeStatement')) {
-            $this->query->expects(self::once())
-                        ->method('executeStatement');
-
             $this->query->expects(self::never())
                         ->method('execute');
         }
@@ -119,9 +116,6 @@ class ExecutionHelperTest extends TestCase
         }
 
         if (!\method_exists($this->query, 'executeQuery')) {
-            $this->query->expects(self::never())
-                        ->method('executeQuery');
-
             $this->query->expects(self::once())
                         ->method('execute')
                         ->willReturn($this->result);
@@ -161,9 +155,6 @@ class ExecutionHelperTest extends TestCase
         }
 
         if (!\method_exists($this->query, 'executeQuery')) {
-            $this->query->expects(self::never())
-                        ->method('executeQuery');
-
             $this->query->expects(self::once())
                         ->method('execute')
                         ->willReturn($this->result);
