@@ -128,14 +128,16 @@ class DatabaseHelperTest extends TestCase
         $value  = 12;
         $field  = 'id';
         $table  = 'tl_test';
+        $offset = 34;
+        $limit  = 56;
         $data   = ['id' => 12, 'name' => 'test'];
 
         $this->queryHelper->expects(self::once())
                           ->method('loadByValue')
-                          ->with($value, $field, $table)
+                          ->with($value, $field, $table, $offset, $limit)
                           ->willReturn($data);
 
-        self::assertSame($data, $this->helper->loadByValue($value, $field, $table));
+        self::assertSame($data, $this->helper->loadByValue($value, $field, $table, $offset, $limit));
     }
 
 
@@ -148,14 +150,17 @@ class DatabaseHelperTest extends TestCase
         $values = [12, 13];
         $field  = 'id';
         $table  = 'tl_test';
+        $order  = 'DESC';
+        $offset = 34;
+        $limit  = 56;
         $data   = [['id' => 12, 'name' => 'test'], ['id' => 13, 'name' => 'testTwo']];
 
         $this->queryHelper->expects(self::once())
                           ->method('loadByList')
-                          ->with($values, $field, $table)
+                          ->with($values, $field, $table, $order, $offset, $limit)
                           ->willReturn($data);
 
-        self::assertSame($data, $this->helper->loadByList($values, $field, $table));
+        self::assertSame($data, $this->helper->loadByList($values, $field, $table, $order, $offset, $limit));
     }
 
 
@@ -165,17 +170,19 @@ class DatabaseHelperTest extends TestCase
      */
     public function testLoadAll(): void
     {
-        $table          = 'tl_test';
-        $orderField     = 'id';
-        $order          = 'DESC';
-        $data           = [['id' => 12, 'name' => 'test'], ['id' => 13, 'name' => 'testTwo']];
+        $table      = 'tl_test';
+        $orderField = 'id';
+        $order      = 'DESC';
+        $offset     = 34;
+        $limit      = 56;
+        $data       = [['id' => 12, 'name' => 'test'], ['id' => 13, 'name' => 'testTwo']];
 
         $this->queryHelper->expects(self::once())
                           ->method('loadAll')
-                          ->with($table, $orderField, $order)
+                          ->with($table, $orderField, $order, $offset, $limit)
                           ->willReturn($data);
 
-        self::assertSame($data, $this->helper->loadAll($table, $orderField, $order));
+        self::assertSame($data, $this->helper->loadAll($table, $orderField, $order, $offset, $limit));
     }
 
     /**

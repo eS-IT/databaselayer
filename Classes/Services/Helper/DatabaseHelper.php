@@ -90,45 +90,68 @@ class DatabaseHelper
     /**
      * Fassade für QueryHelper::loadByValue().
      *
-     * @param  int|string $value
-     * @param  string     $field
-     * @param  string     $table
+     * @param int|string $value
+     * @param string     $field
+     * @param string     $table
+     * @param int        $offset
+     * @param int        $limit
      * @return mixed[]
      * @throws Exception
      */
-    public function loadByValue(int|string $value, string $field, string $table): array
-    {
-        return $this->queryHelper->loadByValue($value, $field, $table);
+    public function loadByValue(
+        int|string $value,
+        string $field,
+        string $table,
+        int $offset = 0,
+        int $limit = 0
+    ): array {
+        return $this->queryHelper->loadByValue($value, $field, $table, $offset, $limit);
     }
 
 
     /**
      * Fassade für QueryHelper::loadByList().
      *
-     * @param  mixed[]  $valueList
-     * @param  string   $field
-     * @param  string   $table
-     * @param  string   $order
+     * @param mixed[] $valueList
+     * @param string  $field
+     * @param string  $table
+     * @param string  $order
+     * @param int     $offset
+     * @param int     $limit
      * @return mixed[]
      * @throws Exception
      */
-    public function loadByList(array $valueList, string $field, string $table, string $order = 'ASC'): array
-    {
-        return $this->queryHelper->loadByList($valueList, $field, $table, $order);
+    public function loadByList(
+        array $valueList,
+        string $field,
+        string $table,
+        string $order = 'ASC',
+        int $offset = 0,
+        int $limit = 0
+    ): array {
+        return $this->queryHelper->loadByList($valueList, $field, $table, $order, $offset, $limit);
     }
 
 
     /**
      * Fassade für QueryHelper::loadAll().
+     *
      * @param string $table
-     * @param string $order
      * @param string $orderField
+     * @param string $order
+     * @param int    $offset
+     * @param int    $limit
      * @return mixed[]
      * @throws Exception
      */
-    public function loadAll(string $table, string $orderField = '', string $order = 'ASC'): array
-    {
-        return $this->queryHelper->loadAll($table, $orderField, $order);
+    public function loadAll(
+        string $table,
+        string $orderField = '',
+        string $order = 'ASC',
+        int $offset = 0,
+        int $limit = 0
+    ): array {
+        return $this->queryHelper->loadAll($table, $orderField, $order, $offset, $limit);
     }
 
 
