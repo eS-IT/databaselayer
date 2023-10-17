@@ -75,14 +75,17 @@ class QueryHelper extends AbstractHelper
             throw new InvalidArgumentException('parameter could not be empty');
         }
 
-        $valueString    = \implode(',', $valueList);
-        $query          = $this->connectionHelper->getQueryBuilder();
+        $query = $this->connectionHelper->getQueryBuilder();
 
         $query->select('*')
-              ->from($table)
-              ->where("$field IN (:$field)")
-              ->setParameter($field, $valueString)
-              ->orderBy($field, $order);
+              ->from($table);
+
+        foreach ($valueList as $value) {
+            $query->orWhere("$field = :$field")
+                  ->setParameter($field, $value);
+        }
+
+        $query->orderBy($field, $order);
 
         return $this->execHelper->executeQuery($query, $offset, $limit);
     }

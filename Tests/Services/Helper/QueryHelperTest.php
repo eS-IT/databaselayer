@@ -304,14 +304,14 @@ class QueryHelperTest extends TestCase
                            ->with($table)
                            ->willReturn(self::returnSelf());
 
-        $this->queryBuilder->expects(self::once())
-                           ->method('where')
-                           ->with("$field IN (:$field)")
+        $this->queryBuilder->expects(self::exactly(\count($value)))
+                           ->method('orWhere')
+                           ->with("$field = :$field")
                            ->willReturn(self::returnSelf());
 
-        $this->queryBuilder->expects(self::once())
+        $this->queryBuilder->expects(self::exactly(\count($value)))
                            ->method('setParameter')
-                           ->with($field, \implode(',', $value))
+                           ->withConsecutive([$field, $value[0]], [$field, $value[1]])
                            ->willReturn(self::returnSelf());
 
         $this->queryBuilder->expects(self::once())
@@ -358,14 +358,14 @@ class QueryHelperTest extends TestCase
                            ->with($table)
                            ->willReturn(self::returnSelf());
 
-        $this->queryBuilder->expects(self::once())
-                           ->method('where')
-                           ->with("$field IN (:$field)")
+        $this->queryBuilder->expects(self::exactly(\count($value)))
+                           ->method('orWhere')
+                           ->with("$field = :$field")
                            ->willReturn(self::returnSelf());
 
-        $this->queryBuilder->expects(self::once())
+        $this->queryBuilder->expects(self::exactly(\count($value)))
                            ->method('setParameter')
-                           ->with($field, \implode(',', $value))
+                           ->withConsecutive([$field, $value[0]], [$field, $value[1]])
                            ->willReturn(self::returnSelf());
 
         $this->queryBuilder->expects(self::once())
