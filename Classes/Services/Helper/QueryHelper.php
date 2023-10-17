@@ -54,7 +54,7 @@ class QueryHelper extends AbstractHelper
     /**
      * Lädt Werte aus einer Liste.
      *
-     * @param mixed[] $valueList
+     * @param array<string> $valueList
      * @param string $field
      * @param string $table
      * @param string $order
@@ -78,14 +78,9 @@ class QueryHelper extends AbstractHelper
         $query = $this->connectionHelper->getQueryBuilder();
 
         $query->select('*')
-              ->from($table);
-
-        foreach ($valueList as $value) {
-            $query->orWhere("$field = :$field")
-                  ->setParameter($field, $value);
-        }
-
-        $query->orderBy($field, $order);
+              ->from($table)
+              ->where($query->expr()->in('id', $valueList))
+              ->orderBy($field, $order);
 
         return $this->execHelper->executeQuery($query, $offset, $limit);
     }

@@ -112,12 +112,12 @@ class DatabaseHelper
     /**
      * Fassade für QueryHelper::loadByList().
      *
-     * @param mixed[] $valueList
-     * @param string  $field
-     * @param string  $table
-     * @param string  $order
-     * @param int     $offset
-     * @param int     $limit
+     * @param array<string> $valueList
+     * @param string        $field
+     * @param string        $table
+     * @param string        $order
+     * @param int           $offset
+     * @param int           $limit
      * @return mixed[]
      * @throws Exception
      */

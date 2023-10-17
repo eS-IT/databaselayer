@@ -14,9 +14,8 @@ declare(strict_types=1);
 namespace Esit\Databaselayer\Tests\Services\Helper;
 
 use Doctrine\DBAL\Exception;
+use Doctrine\DBAL\Query\Expression\ExpressionBuilder;
 use Doctrine\DBAL\Query\QueryBuilder;
-use Doctrine\DBAL\Result;
-
 use Esit\Databaselayer\Classes\Excaptions\InvalidArgumentException;
 use Esit\Databaselayer\Classes\Services\Helper\ConnectionHelper;
 use Esit\Databaselayer\Classes\Services\Helper\ExecutionHelper;
@@ -290,6 +289,10 @@ class QueryHelperTest extends TestCase
         $order  = 'DESC';
         $row    = ['id' => 12, 'name' => 'Test'];
 
+        $expr   = $this->getMockBuilder(ExpressionBuilder::class)
+                       ->disableOriginalConstructor()
+                       ->getMock();
+
         $this->connectionHelper->expects(self::once())
                                ->method('getQueryBuilder')
                                ->willReturn($this->queryBuilder);
@@ -304,14 +307,18 @@ class QueryHelperTest extends TestCase
                            ->with($table)
                            ->willReturn(self::returnSelf());
 
-        $this->queryBuilder->expects(self::exactly(\count($value)))
-                           ->method('orWhere')
-                           ->with("$field = :$field")
-                           ->willReturn(self::returnSelf());
+        $this->queryBuilder->expects(self::once())
+                           ->method('expr')
+                           ->willReturn($expr);
 
-        $this->queryBuilder->expects(self::exactly(\count($value)))
-                           ->method('setParameter')
-                           ->withConsecutive([$field, $value[0]], [$field, $value[1]])
+        $expr->expects(self::once())
+             ->method('in')
+             ->with('id', $value)
+             ->willReturn('id IN (12, 34)');
+
+        $this->queryBuilder->expects(self::once())
+                           ->method('where')
+                           ->with('id IN (12, 34)')
                            ->willReturn(self::returnSelf());
 
         $this->queryBuilder->expects(self::once())
@@ -341,8 +348,12 @@ class QueryHelperTest extends TestCase
         $table  = 'tl_test';
         $order  = 'DESC';
         $offset = 12;
-        $limit = 34;
+        $limit  = 34;
         $row    = ['id' => 12, 'name' => 'Test'];
+
+        $expr   = $this->getMockBuilder(ExpressionBuilder::class)
+                       ->disableOriginalConstructor()
+                       ->getMock();
 
         $this->connectionHelper->expects(self::once())
                                ->method('getQueryBuilder')
@@ -358,14 +369,18 @@ class QueryHelperTest extends TestCase
                            ->with($table)
                            ->willReturn(self::returnSelf());
 
-        $this->queryBuilder->expects(self::exactly(\count($value)))
-                           ->method('orWhere')
-                           ->with("$field = :$field")
-                           ->willReturn(self::returnSelf());
+        $this->queryBuilder->expects(self::once())
+                           ->method('expr')
+                           ->willReturn($expr);
 
-        $this->queryBuilder->expects(self::exactly(\count($value)))
-                           ->method('setParameter')
-                           ->withConsecutive([$field, $value[0]], [$field, $value[1]])
+        $expr->expects(self::once())
+             ->method('in')
+             ->with('id', $value)
+             ->willReturn('id IN (12, 34)');
+
+        $this->queryBuilder->expects(self::once())
+                           ->method('where')
+                           ->with('id IN (12, 34)')
                            ->willReturn(self::returnSelf());
 
         $this->queryBuilder->expects(self::once())
