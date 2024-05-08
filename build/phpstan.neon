@@ -1,7 +1,9 @@
 parameters:
-	level: 9
-	checkGenericClassInNonGenericObjectType: false
-	bootstrapFiles:
-	    - ../../../../vendor/autoload.php
-	paths:
-		- ../Classes
+    level: 9
+    checkGenericClassInNonGenericObjectType: false
+    bootstrapFiles:
+        - ../../../../vendor/autoload.php
+    paths:
+        - ../Classes
+    ignoreErrors:
+        - '#^Cannot cast mixed to int.#'

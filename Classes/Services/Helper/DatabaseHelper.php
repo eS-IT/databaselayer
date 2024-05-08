@@ -39,17 +39,27 @@ class DatabaseHelper
 
 
     /**
-     * @param QueryHelper     $queryHelper
+     * @var DateHelper
+     */
+    private DateHelper $dateHelper;
+
+
+    /**
+     * @param ConnectionHelper $connectionHelper
+     * @param QueryHelper $queryHelper
      * @param StatementHelper $statementHelper
+     * @param DateHelper $dateHelper
      */
     public function __construct(
         ConnectionHelper $connectionHelper,
         QueryHelper $queryHelper,
-        StatementHelper $statementHelper
+        StatementHelper $statementHelper,
+        DateHelper $dateHelper
     ) {
         $this->connectionHelper = $connectionHelper;
         $this->queryHelper      = $queryHelper;
         $this->statementHelper  = $statementHelper;
+        $this->dateHelper       = $dateHelper;
     }
 
 
@@ -196,5 +206,75 @@ class DatabaseHelper
     public function delete(string $value, string $field, string $table): void
     {
         $this->statementHelper->delete($value, $field, $table);
+    }
+
+
+    /**
+     * Gibt die Felder einer Tabelle zurück.
+     *
+     * @param string $table
+     * @return mixed[]
+     * @throws \Doctrine\DBAL\Exception
+     */
+    public function getTableFields(string $table): array
+    {
+        $fields     = [];
+        $columns    = $this->getSchemaManager()->listTableColumns($table) ?: [];
+
+        foreach ($columns as $column) {
+            $fields[] = $column->getName();
+        }
+
+        return $fields;
+    }
+
+
+    /**
+     * Gibt nur die Daten der Felder zurück, die auch in der übergebenen Tabelle enthalten sind.
+     *
+     * @param string  $table
+     * @param mixed[] $data
+     * @return mixed[]
+     * @throws \Doctrine\DBAL\Exception
+     */
+    public function filterDataForDb(string $table, array $data): array
+    {
+        if (empty($data)) {
+            return $data;
+        }
+
+        $dbData = [];
+        $fields = $this->getTableFields($table);
+
+        foreach ($fields as $field) {
+            $dbData[$field] = !empty($data[$field]) ? $data[$field] : null;
+        }
+
+        return $dbData;
+    }
+
+
+    /**
+     * Speichert einen Datensatz.
+     *
+     * @param string  $table
+     * @param mixed[] $data
+     * @return int
+     * @throws \Doctrine\DBAL\Exception
+     */
+    public function save(string $table, array $data): int
+    {
+        $data['tstamp'] = $this->dateHelper->getTimestamp();
+        $data           = $this->filterDataForDb($table, $data);
+
+        if (empty($data['id'])) {
+            return $this->insert($data, $table);
+        }
+
+        $id = (int) $data['id'];
+        unset($data['id']);
+        $this->update($data, $id, $table);
+
+        return $id;
     }
 }

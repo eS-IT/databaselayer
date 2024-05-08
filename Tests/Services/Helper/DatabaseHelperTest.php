@@ -17,10 +17,13 @@ use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception;
 use Doctrine\DBAL\Query\QueryBuilder;
 use Doctrine\DBAL\Schema\AbstractSchemaManager;
+use Doctrine\DBAL\Schema\Column;
 use Esit\Databaselayer\Classes\Services\Helper\ConnectionHelper;
 use Esit\Databaselayer\Classes\Services\Helper\DatabaseHelper;
+use Esit\Databaselayer\Classes\Services\Helper\DateHelper;
 use Esit\Databaselayer\Classes\Services\Helper\QueryHelper;
 use Esit\Databaselayer\Classes\Services\Helper\StatementHelper;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class DatabaseHelperTest extends TestCase
@@ -28,21 +31,33 @@ class DatabaseHelperTest extends TestCase
 
 
     /**
-     * @var ConnectionHelper
+     * @var (ConnectionHelper&MockObject)|MockObject
      */
     private $connectionHelper;
 
 
     /**
-     * @var QueryHelper
+     * @var (QueryHelper&MockObject)|MockObject
      */
     private $queryHelper;
 
 
     /**
-     * @var StatementHelper
+     * @var (StatementHelper&MockObject)|MockObject
      */
     private $statementHelper;
+
+
+    /**
+     * @var (AbstractSchemaManager&MockObject)|MockObject
+     */
+    private $schemaManager;
+
+
+    /**
+     * @var (DateHelper&MockObject)|MockObject
+     */
+    private $dateHelper;
 
 
     /**
@@ -65,10 +80,19 @@ class DatabaseHelperTest extends TestCase
                                        ->disableOriginalConstructor()
                                        ->getMock();
 
+        $this->dateHelper       = $this->getMockBuilder(DateHelper::class)
+                                       ->disableOriginalConstructor()
+                                       ->getMock();
+
+        $this->schemaManager    = $this->getMockBuilder(AbstractSchemaManager::class)
+                                       ->disableOriginalConstructor()
+                                       ->getMock();
+
         $this->helper           = new DatabaseHelper(
             $this->connectionHelper,
             $this->queryHelper,
-            $this->statementHelper
+            $this->statementHelper,
+            $this->dateHelper
         );
     }
 
@@ -238,4 +262,198 @@ class DatabaseHelperTest extends TestCase
 
         $this->helper->delete($value, $field, $table);
     }
+
+
+    /**
+     * @return void
+     * @throws \Doctrine\DBAL\Exception
+     */
+    public function testGetTableFieldsReturnEmpytArrayIfNoFieldsFound(): void
+    {
+        $column         = $this->getMockBuilder(Column::class)
+                               ->disableOriginalConstructor()
+                               ->getMock();
+
+        $table          = 'tl_test';
+
+        $this->connectionHelper->expects(self::once())
+                               ->method('getSchemaManager')
+                               ->willReturn($this->schemaManager);
+
+        $this->schemaManager->expects(self::once())
+                            ->method('listTableColumns')
+                            ->with($table)
+                            ->willReturn(null);
+
+        $column->expects(self::never())
+               ->method('getName');
+
+        $this->assertEmpty($this->helper->getTableFields($table));
+    }
+
+
+    /**
+     * @return void
+     * @throws \Doctrine\DBAL\Exception
+     */
+    public function testGetTableFieldsReturnFieldsIfFieldsFound(): void
+    {
+        $column         = $this->getMockBuilder(Column::class)
+                               ->disableOriginalConstructor()
+                               ->getMock();
+
+        $tableFields    = [$column, $column];
+        $table          = 'tl_test';
+
+        $this->connectionHelper->expects(self::once())
+                               ->method('getSchemaManager')
+                               ->willReturn($this->schemaManager);
+
+        $this->schemaManager->expects(self::once())
+                            ->method('listTableColumns')
+                            ->with($table)
+                            ->willReturn($tableFields);
+
+        $column->expects(self::exactly(\count($tableFields)))
+               ->method('getName')
+               ->willReturn('test');
+
+        $this->assertSame(['test', 'test'], $this->helper->getTableFields($table));
+    }
+
+
+    /**
+     * @return void
+     * @throws \Doctrine\DBAL\Exception
+     */
+    public function testGetTableFieldsDoNothingIfDataIsEmtpy(): void
+    {
+        $table  = 'tl_test';
+        $data   = [];
+
+        $this->connectionHelper->expects(self::never())
+                               ->method('getSchemaManager');
+
+        $this->schemaManager->expects(self::never())
+                            ->method('listTableColumns');
+
+        $this->assertEmpty($this->helper->filterDataForDb($table, $data));
+    }
+
+
+    /**
+     * @return void
+     * @throws \Doctrine\DBAL\Exception
+     */
+    public function testGetTableFieldsReturnFieldsIfDataIsNotEmtpy(): void
+    {
+        $column         = $this->getMockBuilder(Column::class)
+                               ->disableOriginalConstructor()
+                               ->getMock();
+
+        $tableFields    = [$column];
+        $table          = 'tl_test';
+        $data           = ['test' => 'myTest', 'notIn'=>'Table'];
+
+        $this->connectionHelper->expects(self::once())
+                               ->method('getSchemaManager')
+                               ->willReturn($this->schemaManager);
+
+        $this->schemaManager->expects(self::once())
+                            ->method('listTableColumns')
+                            ->with($table)
+                            ->willReturn($tableFields);
+
+        $column->expects(self::exactly(\count($tableFields)))
+               ->method('getName')
+               ->willReturn('test');
+
+        $this->assertSame(['test' => 'myTest'], $this->helper->filterDataForDb($table, $data));
+    }
+
+
+    /**
+     * @return void
+     * @throws \Doctrine\DBAL\Exception
+     */
+    public function testSaveCallInsertIfNoIdFound(): void
+    {
+        $column         = $this->getMockBuilder(Column::class)
+                               ->disableOriginalConstructor()
+                               ->getMock();
+
+        $tableFields    = [$column, $column];
+        $table          = 'tl_test';
+        $data           = ['test' => 'myTest', 'notIn'=>'Table'];
+        $id             = 12;
+        $time           = \time();
+        $expected       = ['test' => 'myTest', 'tstamp' => $time];
+
+        $this->dateHelper->expects(self::once())
+                         ->method('getTimestamp')
+                         ->willReturn($time);
+
+        $this->connectionHelper->expects(self::once())
+                               ->method('getSchemaManager')
+                               ->willReturn($this->schemaManager);
+
+        $this->schemaManager->expects(self::once())
+                            ->method('listTableColumns')
+                            ->with($table)
+                            ->willReturn($tableFields);
+
+        $this->statementHelper->expects(self::once())
+                              ->method('insert')
+                              ->with($expected, $table)
+                              ->willReturn($id);
+
+        $column->expects(self::exactly(\count($tableFields)))
+               ->method('getName')
+               ->willReturnOnConsecutiveCalls('test', 'tstamp');
+
+        $this->assertSame($id, $this->helper->save($table, $data));
+    }
+
+
+    /**
+     * @return void
+     * @throws \Doctrine\DBAL\Exception
+     */
+    public function testSaveCallUpdateIfNoIdFound(): void
+    {
+        $column         = $this->getMockBuilder(Column::class)
+                               ->disableOriginalConstructor()
+                               ->getMock();
+
+        $tableFields    = [$column, $column, $column];
+        $table          = 'tl_test';
+        $id             = 12;
+        $data           = ['id' => $id, 'test' => 'myTest', 'notIn'=>'Table'];
+        $time           = \time();
+        $expected       = ['test' => 'myTest', 'tstamp' => $time];
+
+        $this->dateHelper->expects(self::once())
+                         ->method('getTimestamp')
+                         ->willReturn($time);
+
+        $this->connectionHelper->expects(self::once())
+                               ->method('getSchemaManager')
+                               ->willReturn($this->schemaManager);
+
+        $this->schemaManager->expects(self::once())
+                            ->method('listTableColumns')
+                            ->with($table)
+                            ->willReturn($tableFields);
+
+        $this->statementHelper->expects(self::once())
+                              ->method('update')
+                              ->with($expected, $id, $table);
+
+        $column->expects(self::exactly(\count($tableFields)))
+               ->method('getName')
+               ->willReturnOnConsecutiveCalls('test', 'tstamp', 'id');
+
+        $this->assertSame($id, $this->helper->save($table, $data));
+    }
 }
+
