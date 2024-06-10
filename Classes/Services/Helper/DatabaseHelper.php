@@ -247,7 +247,9 @@ class DatabaseHelper
         $fields = $this->getTableFields($table);
 
         foreach ($fields as $field) {
-            $dbData[$field] = !empty($data[$field]) ? $data[$field] : null;
+            if (isset($data[$field])) {
+                $dbData[$field] = $data[$field];
+            }
         }
 
         return $dbData;
