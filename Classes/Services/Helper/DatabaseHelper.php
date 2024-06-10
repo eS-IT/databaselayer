@@ -122,24 +122,26 @@ class DatabaseHelper
     /**
      * Fassade für QueryHelper::loadByList().
      *
-     * @param array<string> $valueList
-     * @param string        $field
-     * @param string        $table
-     * @param string        $order
-     * @param int           $offset
-     * @param int           $limit
+     * @param string[] $valueList
+     * @param string $orderField
+     * @param string $table
+     * @param string $order
+     * @param int $offset
+     * @param int $limit
+     * @param string $searchField
      * @return mixed[]
      * @throws Exception
      */
     public function loadByList(
         array $valueList,
-        string $field,
+        string $orderField,
         string $table,
         string $order = 'ASC',
         int $offset = 0,
-        int $limit = 0
+        int $limit = 0,
+        string $searchField = 'id'
     ): array {
-        return $this->queryHelper->loadByList($valueList, $field, $table, $order, $offset, $limit);
+        return $this->queryHelper->loadByList($valueList, $orderField, $table, $order, $offset, $limit, $searchField);
     }
 
 

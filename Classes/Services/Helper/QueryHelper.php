@@ -61,9 +61,7 @@ class QueryHelper extends AbstractHelper
      * @param int $offset
      * @param int $limit
      * @param string $searchField
-     *
      * @return mixed[]
-     *
      * @throws Exception
      */
     public function loadByList(
