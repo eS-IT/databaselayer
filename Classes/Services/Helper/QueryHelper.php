@@ -54,24 +54,28 @@ class QueryHelper extends AbstractHelper
     /**
      * Lädt Werte aus einer Liste.
      *
-     * @param array<string> $valueList
-     * @param string $field
+     * @param string[] $valueList
+     * @param string $orderField
      * @param string $table
      * @param string $order
      * @param int $offset
      * @param int $limit
+     * @param string $searchField
+     *
      * @return mixed[]
+     *
      * @throws Exception
      */
     public function loadByList(
         array $valueList,
-        string $field,
+        string $orderField,
         string $table,
         string $order = 'ASC',
         int $offset = 0,
-        int $limit = 0
+        int $limit = 0,
+        string $searchField = 'id'
     ): array {
-        if (empty($valueList) || empty($field) || empty($table)) {
+        if (empty($valueList) || empty($orderField) || empty($table)) {
             throw new InvalidArgumentException('parameter could not be empty');
         }
 
@@ -79,8 +83,8 @@ class QueryHelper extends AbstractHelper
 
         $query->select('*')
               ->from($table)
-              ->where($query->expr()->in('id', $valueList))
-              ->orderBy($field, $order);
+              ->where($query->expr()->in($searchField, $valueList))
+              ->orderBy($orderField, $order);
 
         return $this->execHelper->executeQuery($query, $offset, $limit);
     }

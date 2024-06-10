@@ -343,13 +343,14 @@ class QueryHelperTest extends TestCase
      */
     public function testLoadByListSetOffsetAndLimit(): void
     {
-        $value  = ['12', '34'];
-        $field  = 'id';
-        $table  = 'tl_test';
-        $order  = 'DESC';
-        $offset = 12;
-        $limit  = 34;
-        $row    = ['id' => 12, 'name' => 'Test'];
+        $value          = ['12', '34'];
+        $orederField    = 'id';
+        $table          = 'tl_test';
+        $order          = 'DESC';
+        $offset         = 12;
+        $limit          = 34;
+        $searchField    = 'uuid';
+        $row            = [$searchField => 12, 'name' => 'Test'];
 
         $expr   = $this->getMockBuilder(ExpressionBuilder::class)
                        ->disableOriginalConstructor()
@@ -375,17 +376,17 @@ class QueryHelperTest extends TestCase
 
         $expr->expects(self::once())
              ->method('in')
-             ->with('id', $value)
-             ->willReturn('id IN (12, 34)');
+             ->with($searchField, $value)
+             ->willReturn("$searchField IN (12, 34)");
 
         $this->queryBuilder->expects(self::once())
                            ->method('where')
-                           ->with('id IN (12, 34)')
+                           ->with("$searchField IN (12, 34)")
                            ->willReturn(self::returnSelf());
 
         $this->queryBuilder->expects(self::once())
                            ->method('orderBy')
-                           ->with($field, $order)
+                           ->with($orederField, $order)
                            ->willReturn(self::returnSelf());
 
         $this->execHelper->expects(self::once())
@@ -393,7 +394,7 @@ class QueryHelperTest extends TestCase
                          ->with($this->queryBuilder, $offset, $limit)
                          ->willReturn([$row, $row]);
 
-        $rtn = $this->helper->loadByList($value, $field, $table, $order, $offset, $limit);
+        $rtn = $this->helper->loadByList($value, $orederField, $table, $order, $offset, $limit, $searchField);
 
         self::assertSame([$row, $row], $rtn);
     }
