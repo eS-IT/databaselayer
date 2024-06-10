@@ -81,7 +81,8 @@ class QueryHelper extends AbstractHelper
 
         $query->select('*')
               ->from($table)
-              ->where($query->expr()->in($searchField, $valueList))
+            //->where($query->expr()->in($searchField, $valueList)) funktioniert nicht mit uuids
+              ->where("$searchField IN (" . '"' . \implode('", "', $valueList) . '"' . ")")
               ->orderBy($orderField, $order);
 
         return $this->execHelper->executeQuery($query, $offset, $limit);
