@@ -147,6 +147,28 @@ class DatabaseHelperTest extends TestCase
      * @return void
      * @throws Exception
      */
+    public function testLoadOneByValueWillCallQueryHelper(): void
+    {
+        $value  = 12;
+        $field  = 'id';
+        $table  = 'tl_test';
+        $offset = 34;
+        $limit  = 56;
+        $data   = ['id' => 12];
+
+        $this->queryHelper->expects(self::once())
+                          ->method('loadOneByValue')
+                          ->with($value, $field, $table, $offset, $limit)
+                          ->willReturn($data);
+
+        self::assertSame($data, $this->helper->loadOneByValue($value, $field, $table, $offset, $limit));
+    }
+
+
+    /**
+     * @return void
+     * @throws Exception
+     */
     public function testLoadByValueWillCallQueryHelper(): void
     {
         $value  = 12;
@@ -154,7 +176,10 @@ class DatabaseHelperTest extends TestCase
         $table  = 'tl_test';
         $offset = 34;
         $limit  = 56;
-        $data   = ['id' => 12, 'name' => 'test'];
+        $data   = [
+            ['id' => 12, 'name' => 'test1'],
+            ['id' => 34, 'name' => 'test2']
+        ];
 
         $this->queryHelper->expects(self::once())
                           ->method('loadByValue')

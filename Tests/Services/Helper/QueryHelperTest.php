@@ -73,6 +73,98 @@ class QueryHelperTest extends TestCase
      * @return void
      * @throws Exception
      */
+    public function testLoadOneByValueReturnEmptyArrayIfNoDataFound(): void
+    {
+        $value  = '12';
+        $field  = 'id';
+        $table  = 'tl_test';
+        $row    = [];
+
+        $this->connectionHelper->expects(self::once())
+                               ->method('getQueryBuilder')
+                               ->willReturn($this->queryBuilder);
+
+        $this->queryBuilder->expects(self::once())
+                           ->method('select')
+                           ->with('*')
+                           ->willReturn(self::returnSelf());
+
+        $this->queryBuilder->expects(self::once())
+                           ->method('from')
+                           ->with($table)
+                           ->willReturn(self::returnSelf());
+
+        $this->queryBuilder->expects(self::once())
+                           ->method('where')
+                           ->with("$field = :$field")
+                           ->willReturn(self::returnSelf());
+
+        $this->queryBuilder->expects(self::once())
+                           ->method('setParameter')
+                           ->with($field, $value)
+                           ->willReturn(self::returnSelf());
+
+        $this->execHelper->expects(self::once())
+                         ->method('executeQuery')
+                         ->with($this->queryBuilder)
+                         ->willReturn($row);
+
+        $rtn = $this->helper->loadOneByValue($value, $field, $table);
+
+        self::assertEmpty($rtn);
+    }
+
+
+    /**
+     * @return void
+     * @throws Exception
+     */
+    public function testLoadOneByValueReturnFirstRowIfDataFound(): void
+    {
+        $value  = '12';
+        $field  = 'id';
+        $table  = 'tl_test';
+        $row    = [['id' => 12], ['id' => 34]];
+
+        $this->connectionHelper->expects(self::once())
+                               ->method('getQueryBuilder')
+                               ->willReturn($this->queryBuilder);
+
+        $this->queryBuilder->expects(self::once())
+                           ->method('select')
+                           ->with('*')
+                           ->willReturn(self::returnSelf());
+
+        $this->queryBuilder->expects(self::once())
+                           ->method('from')
+                           ->with($table)
+                           ->willReturn(self::returnSelf());
+
+        $this->queryBuilder->expects(self::once())
+                           ->method('where')
+                           ->with("$field = :$field")
+                           ->willReturn(self::returnSelf());
+
+        $this->queryBuilder->expects(self::once())
+                           ->method('setParameter')
+                           ->with($field, $value)
+                           ->willReturn(self::returnSelf());
+
+        $this->execHelper->expects(self::once())
+                         ->method('executeQuery')
+                         ->with($this->queryBuilder)
+                         ->willReturn($row);
+
+        $rtn = $this->helper->loadOneByValue($value, $field, $table);
+
+        self::assertSame($row[0], $rtn);
+    }
+
+
+    /**
+     * @return void
+     * @throws Exception
+     */
     public function testLoadByValueThrowExceptionIfValueIsEmpty(): void
     {
         $value  = '';

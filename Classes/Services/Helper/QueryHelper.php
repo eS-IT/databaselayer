@@ -19,6 +19,37 @@ use Esit\Databaselayer\Classes\Excaptions\InvalidArgumentException;
 class QueryHelper extends AbstractHelper
 {
     /**
+     * Lädt Daten aus der Datenbank anhane eines bestimmten Werts (z.B. der Id)
+     * und gibt die erste Zeile zurück.
+     *
+     * @param int|string $value
+     * @param string $field
+     * @param string $table
+     * @param int $offset
+     * @param int $limit
+     * @return mixed[]
+     * @throws Exception
+     */
+    public function loadOneByValue(
+        int|string $value,
+        string $field,
+        string $table,
+        int $offset = 0,
+        int $limit = 0
+    ): array {
+        $data = $this->loadByValue($value, $field, $table, $offset, $limit);
+
+        if (!empty($data)) {
+            $data = \array_shift($data);
+
+            return \is_array($data) ? $data : [];
+        }
+
+        return [];
+    }
+
+
+    /**
      * Lädt Daten aus der Datenbank anhane eines bestimmten Werts (z.B. der Id).
      *
      * @param int|string $value

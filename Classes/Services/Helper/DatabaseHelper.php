@@ -98,6 +98,28 @@ class DatabaseHelper
 
 
     /**
+     * Fassade für QueryHelper::loadOneByValue().
+     *
+     * @param int|string $value
+     * @param string     $field
+     * @param string     $table
+     * @param int        $offset
+     * @param int        $limit
+     * @return mixed[]
+     * @throws Exception
+     */
+    public function loadOneByValue(
+        int|string $value,
+        string $field,
+        string $table,
+        int $offset = 0,
+        int $limit = 0
+    ): array {
+        return $this->queryHelper->loadOneByValue($value, $field, $table, $offset, $limit);
+    }
+
+
+    /**
      * Fassade für QueryHelper::loadByValue().
      *
      * @param int|string $value
