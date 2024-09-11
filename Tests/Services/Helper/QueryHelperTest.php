@@ -398,19 +398,10 @@ class QueryHelperTest extends TestCase
                            ->method('from')
                            ->with($table)
                            ->willReturn(self::returnSelf());
-        /*
-        $this->queryBuilder->expects(self::once())
-                           ->method('expr')
-                         ->willReturn($expr);
 
-        $expr->expects(self::once())
-             ->method('in')
-             ->with('id', $value)
-             ->willReturn('id IN (12, 34)');
-        */
         $this->queryBuilder->expects(self::once())
                            ->method('where')
-                           ->with('id IN ("12", "34")')
+                           ->with("id IN ('12', '34')")
                            ->willReturn(self::returnSelf());
 
         $this->queryBuilder->expects(self::once())
@@ -461,19 +452,10 @@ class QueryHelperTest extends TestCase
                            ->method('from')
                            ->with($table)
                            ->willReturn(self::returnSelf());
-/*
-        $this->queryBuilder->expects(self::once())
-                           ->method('expr')
-                           ->willReturn($expr);
 
-        $expr->expects(self::once())
-             ->method('in')
-             ->with($searchField, $value)
-             ->willReturn("$searchField IN (\"12\", \"34\")");
-*/
         $this->queryBuilder->expects(self::once())
                            ->method('where')
-                           ->with("$searchField IN (\"12\", \"34\")")
+                           ->with("$searchField IN ('12', '34')")
                            ->willReturn(self::returnSelf());
 
         $this->queryBuilder->expects(self::once())
