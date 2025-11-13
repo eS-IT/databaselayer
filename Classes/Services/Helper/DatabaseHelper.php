@@ -206,15 +206,15 @@ class DatabaseHelper
     /**
      * Fassade für StatementHelper::update().
      *
-     * @param  mixed[]  $data
-     * @param  int      $id
-     * @param  string   $table
+     * @param mixed[] $data
+     * @param int     $id
+     * @param string  $table
+     * @param string  $field
      * @return void
-     * @throws Exception
      */
-    public function update(array $data, int $id, string $table): void
+    public function update(array $data, int $id, string $table, string $field = 'id'): void
     {
-        $this->statementHelper->update($data, $id, $table);
+        $this->statementHelper->update($data, $id, $table, $field);
     }
 
 

@@ -36,12 +36,13 @@ class StatementHelper extends AbstractHelper
     /**
      * Ändert einen Datensatz in der Db.
      *
-     * @param  mixed[]  $data
-     * @param  int      $id
-     * @param  string   $table
-     * @throws Exception
+     * @param mixed[] $data
+     * @param int     $id
+     * @param string  $table
+     * @param string  $field
+     * @return void
      */
-    public function update(array $data, int $id, string $table): void
+    public function update(array $data, int $id, string $table, string $field = 'id'): void
     {
         if (empty($data) || empty($id) || empty($table)) {
             throw new InvalidArgumentException('parameter could not be empty');
@@ -55,8 +56,8 @@ class StatementHelper extends AbstractHelper
             $query->set($k, $query->createNamedParameter($v));
         }
 
-        $query->where("id = :id")
-              ->setParameter('id', $id);
+        $query->where("$field = :$field")
+              ->setParameter($field, $id);
 
         $this->execHelper->executeStatement($query);
     }
