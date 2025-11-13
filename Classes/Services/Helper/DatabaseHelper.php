@@ -217,7 +217,7 @@ class DatabaseHelper
     /**
      * Fassade für StatementHelper::update().
      *
-     * @param array $data
+     * @param mixed[] $data
      * @param int $id
      * @param string $table
      * @param string $field
