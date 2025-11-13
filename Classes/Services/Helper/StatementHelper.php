@@ -39,9 +39,10 @@ class StatementHelper extends AbstractHelper
      * @param  mixed[]  $data
      * @param  int      $id
      * @param  string   $table
+     *
      * @throws Exception
      */
-    public function update(array $data, int $id, string $table): void
+    public function update(array $data, int $id, string $table, string $field = 'id'): void
     {
         if (empty($data) || empty($id) || empty($table)) {
             throw new InvalidArgumentException('parameter could not be empty');
@@ -55,8 +56,8 @@ class StatementHelper extends AbstractHelper
             $query->set($k, $query->createNamedParameter($v));
         }
 
-        $query->where("id = :id")
-              ->setParameter('id', $id);
+        $query->where("$field = :$field")
+              ->setParameter($field, $id);
 
         $this->execHelper->executeStatement($query);
     }
@@ -67,7 +68,9 @@ class StatementHelper extends AbstractHelper
      *
      * @param  mixed[]  $data
      * @param  string   $table
+     *
      * @throws Exception
+     *
      * @return int
      */
     public function insert(array $data, string $table): int
@@ -94,7 +97,9 @@ class StatementHelper extends AbstractHelper
      * @param  string $value
      * @param  string $field
      * @param  string $table
+     *
      * @return void
+     *
      * @throws Exception
      */
     public function delete(string $value, string $field, string $table): void

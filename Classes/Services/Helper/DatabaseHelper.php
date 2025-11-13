@@ -23,25 +23,25 @@ class DatabaseHelper
     /**
      * @var ConnectionHelper
      */
-    private ConnectionHelper $connectionHelper;
+    protected ConnectionHelper $connectionHelper;
 
 
     /**
      * @var QueryHelper
      */
-    private QueryHelper $queryHelper;
+    protected QueryHelper $queryHelper;
 
 
     /**
      * @var StatementHelper
      */
-    private StatementHelper $statementHelper;
+    protected StatementHelper $statementHelper;
 
 
     /**
      * @var DateHelper
      */
-    private DateHelper $dateHelper;
+    protected DateHelper $dateHelper;
 
 
     /**
@@ -89,6 +89,7 @@ class DatabaseHelper
      * Fassade für ConnectionHelper::getSchemaManager().
      *
      * @return AbstractSchemaManager
+     *
      * @throws Exception
      */
     public function getSchemaManager(): AbstractSchemaManager
@@ -105,7 +106,9 @@ class DatabaseHelper
      * @param string     $table
      * @param int        $offset
      * @param int        $limit
+     *
      * @return mixed[]
+     *
      * @throws Exception
      */
     public function loadOneByValue(
@@ -127,7 +130,9 @@ class DatabaseHelper
      * @param string     $table
      * @param int        $offset
      * @param int        $limit
+     *
      * @return mixed[]
+     *
      * @throws Exception
      */
     public function loadByValue(
@@ -151,7 +156,9 @@ class DatabaseHelper
      * @param int $offset
      * @param int $limit
      * @param string $searchField
+     *
      * @return mixed[]
+     *
      * @throws Exception
      */
     public function loadByList(
@@ -175,7 +182,9 @@ class DatabaseHelper
      * @param string $order
      * @param int    $offset
      * @param int    $limit
+     *
      * @return mixed[]
+     *
      * @throws Exception
      */
     public function loadAll(
@@ -194,7 +203,9 @@ class DatabaseHelper
      *
      * @param  mixed[]  $data
      * @param  string   $table
+     *
      * @return int
+     *
      * @throws Exception
      */
     public function insert(array $data, string $table): int
@@ -206,15 +217,16 @@ class DatabaseHelper
     /**
      * Fassade für StatementHelper::update().
      *
-     * @param  mixed[]  $data
-     * @param  int      $id
-     * @param  string   $table
+     * @param array $data
+     * @param int $id
+     * @param string $table
+     * @param string $field
+     *
      * @return void
-     * @throws Exception
      */
-    public function update(array $data, int $id, string $table): void
+    public function update(array $data, int $id, string $table, string $field = 'id'): void
     {
-        $this->statementHelper->update($data, $id, $table);
+        $this->statementHelper->update($data, $id, $table, $field);
     }
 
 
@@ -224,7 +236,9 @@ class DatabaseHelper
      * @param  string $value
      * @param  string $field
      * @param  string $table
+     *
      * @return void
+     *
      * @throws Exception
      */
     public function delete(string $value, string $field, string $table): void
@@ -237,7 +251,9 @@ class DatabaseHelper
      * Gibt die Felder einer Tabelle zurück.
      *
      * @param string $table
+     *
      * @return mixed[]
+     *
      * @throws \Doctrine\DBAL\Exception
      */
     public function getTableFields(string $table): array
@@ -258,7 +274,9 @@ class DatabaseHelper
      *
      * @param string  $table
      * @param mixed[] $data
+     *
      * @return mixed[]
+     *
      * @throws \Doctrine\DBAL\Exception
      */
     public function filterDataForDb(string $table, array $data): array
@@ -285,7 +303,9 @@ class DatabaseHelper
      *
      * @param string  $table
      * @param mixed[] $data
+     *
      * @return int
+     *
      * @throws \Doctrine\DBAL\Exception
      */
     public function save(string $table, array $data): int
